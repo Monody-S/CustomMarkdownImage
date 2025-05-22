@@ -15,3 +15,15 @@
 ## 使用例
 
 见目录下各`sample.py`文件
+
+## 图片预览
+
+> 元素预览
+![元素预览](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览2.gif)
+
+> 分页+侧边图渲染
+![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览1.gif)
+
+## 其他
+
+欢迎各位分享你自己的style风格，联系QQ`614675349`
