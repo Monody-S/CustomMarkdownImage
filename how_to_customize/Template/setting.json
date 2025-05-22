@@ -1,0 +1,72 @@
+{
+    "name":"名称",
+    "intr":"简介",
+    "author":"作者",
+    "version":"1.0",
+    
+    "cost":0,
+    "selling":false,
+
+    "fontSize": 25,
+
+    "title1FontSize": 70,
+    "title2FontSize": 55,
+    "title3FontSize": 40,
+
+    "expressionFontSizeRate": 0.8,
+    "codeBlockFontSize": 15,
+
+    "rd": 30,
+    "ld": 30,
+    "ud": 30,
+    "dd": 30,
+
+    "xSizeMax": 1000,
+
+    "font": "smSans.ttf",
+    "titleFont": "smSans.ttf",
+    "expressionFont": "smSans.ttf",
+    "codeFont": "smSans.ttf",
+
+    "codeBlockLRDistance": 20,
+    "codeBlockUDDistance": 20,
+
+    "formLineDistance": 20,
+    "lineDistance": 10,
+    "citeDistance": 30,
+
+    "pageLineColor": [50,255,255,150],
+    "pageLineStyle": "full_line",
+
+    "unorderedListDotColor": [204,229,255],
+    "orderedListDotColor": [204,229,255],
+    "orderedListNumberColor": [76,0,153],
+
+    "citeUnderpainting": [0,60,120,180],
+    "citeSplitLineColor": [0,102,204,238],
+
+    "codeBlockUnderpainting": [0,0,102,180],
+    "codeBlockTitleColor": [204,229,255],
+
+    "formLineColor": [85,255,255],
+    "formTextColor":[255,255,255],
+    "formUnderpainting":[0,0,0,0],
+    "formTitleUnderpainting":[0,0,0,0],
+
+    "textColor": [255,255,255],
+    "textGradientEndColor": [30,255,255],
+    "linkColor": [255,187,255],
+
+    "expressionUnderpainting": [0,0,102,180],
+    "insertCodeUnderpating": [0,0,102,180],
+
+    "idlineColor": [120,255,255],
+
+    "expressionTextColor": [153,204,255],
+    "insertCodeTextColor": [153,255,153],
+    "codeBlockTextColor": [153,255,153],
+
+    "remarkColor": [51,255,246],
+    "remarkFontSize": 15,
+    "remarkCoordinate": [30,2]
+}
