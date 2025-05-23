@@ -911,7 +911,7 @@ class MdStyle:
             return fontCache[key]
         
         path1 = path if path.exists() else FONT_PATH
-        path2 = path if path.exists() else FONT_PATH
+        path2 = FONT_PATH
 
         files1 = os.listdir(path1)
 
