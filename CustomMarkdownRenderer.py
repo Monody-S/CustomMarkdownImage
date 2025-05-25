@@ -19,7 +19,7 @@ import random
 import inspect
 import importlib
 
-from .Setting import (
+from Setting import (
     FONT_PATH,
     PAINT_PATH,
     DEFAULT_IMAGE_PATH,
