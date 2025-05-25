@@ -9,14 +9,15 @@ from fontTools.ttLib import TTFont
 from typing import Any,Optional,Callable,Sequence
 from pathlib import Path
 
-import pathlib
 import requests
 import os
 import json
+import yaml
 import math
 import copy
 import random
 import inspect
+import importlib
 
 from Setting import (
     FONT_PATH,
@@ -830,7 +831,8 @@ class MdStyle:
      - dotted_line 虚线
     """
 
-    backGroundDrawFunc:mdBackGroundDrawFunc = DefaultMdBackGroundDraw
+    # mdBackGroundDrawFunc 可以删了
+    # backGroundDrawFunc:mdBackGroundDrawFunc = DefaultMdBackGroundDraw
     """背景绘制函数"""
 
     unorderedListDotColor:mdColor = (204,229,255)
@@ -925,6 +927,10 @@ class MdStyle:
         )
         return fontCache[key]
     
+    def backGroundDrawFunc(xs: int, ys: int) -> Image.Image:
+        """背景绘制函数"""
+        return DefaultMdBackGroundDraw(xs, ys)
+
     def Render(
         self,
         text: str,
@@ -1229,12 +1235,38 @@ defaultHeaders = {
 DEFAULT_STYLE = MdStyle()
 MARKDOWN_STYLE_PATH = Path("./data/MarkdownStyles")
 
-def LoadMarkdownStyles(path: Union[str, Path]) -> MdStyle:
+def LoadMarkdownStyles(style: Union[str, Path], *args: Any, **kwargs: Any) -> MdStyle:
+    styleRoot: Path
+    if isinstance(style, str):
+        # 默认去 styles 文件夹下寻找
+        findPath = (Path(__file__).parent / 'styles' / style)
+        if findPath.exists() and findPath.is_dir():
+            styleRoot = findPath
+        else:
+            styleRoot = Path(style)
+    else:
+        styleRoot = style
 
-    style = path if isinstance(path, Path) else Path(path)
+    # python样式
+    if (styleRoot / "__init__.py").exists():return loadMarkdownStylesPython(styleRoot, args, kwargs)
+    
+    # json样式
+    if args or kwargs:
+        raise ValueError("json style dont support args and kwargs")
+    return loadMarkdownStylesJson(styleRoot)
 
-    elements = json.loads(open(style / "elements.json",encoding="UTF-8").read())
-    setting = json.loads(open(style / "setting.json",encoding="UTF-8").read())
+def loadMarkdownStylesPython(path: Path, args: list[Any], kwargs: dict[str,Any]) -> MdStyle:
+    style = importlib.import_module(pathToModuleName(path.resolve()))
+    mdstyle = getattr(style, "Style", None)
+    if not mdstyle:
+        raise ValueError(f"Style not found in {path.as_posix()}")
+    if not issubclass(mdstyle, MdStyle):
+        raise ValueError(f"Style is not MdStyle in {path.as_posix()}")
+    return mdstyle(*args, **kwargs)
+
+def loadMarkdownStylesJson(path: Path) -> MdStyle:
+    elements = loadJson(path, "elements")
+    setting = loadJson(path, "setting")
 
     items: dict[str, Any] = {key:tuple(setting[key]) if key in COLOR_KEYS else setting[key] for key in setting}
 
@@ -1244,16 +1276,32 @@ def LoadMarkdownStyles(path: Union[str, Path]) -> MdStyle:
             elements["background"]["data"],
             elements["decorates"]["top"],
             elements["decorates"]["bottom"],
-            style,
+            path,
             elements["page"] if "page" in elements else None,
             elements["duratio"] if "duratio" in elements else 0.5,
             elements["playbackSequence"] if "playbackSequence" in elements else None,
         )
         items["decorates"] = decorates
 
-    mdStyle = MdStyle(**items,path = style)
+    return MdStyle(**items,path = path)
 
-    return mdStyle
+def loadJson(rootPath: Path, name: str)-> Any:
+    loadMap = {
+        'yml': lambda file: yaml.load(file, yaml.FullLoader),
+        'yaml': lambda file: yaml.load(file, yaml.FullLoader),
+        'json': lambda file: json.load(file),
+    }
+    for extension, loader in loadMap.items():
+        if (rootPath / f"{name}.{extension}").exists():
+            with open(rootPath / f"{name}.{extension}", 'r', encoding='utf-8') as file:
+                return loader(file)
+            
+    raise FileNotFoundError(f"File {name} not found in {rootPath.as_posix()} with extensions {list(loadMap.keys())}")
+
+def pathToModuleName(path: Path) -> str:
+    """转换路径为模块名(借鉴于nb)"""
+    rel_path = path.resolve().relative_to(Path.cwd().resolve())
+    return ".".join(rel_path.parts[:-1] + (rel_path.stem,))
 
 def MdToImage(
         text: str,
