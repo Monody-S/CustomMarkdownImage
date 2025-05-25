@@ -18,7 +18,7 @@ import copy
 import random
 import inspect
 
-from Setting import (
+from .Setting import (
     FONT_PATH,
     PAINT_PATH,
     DEFAULT_IMAGE_PATH,
@@ -1229,9 +1229,15 @@ defaultHeaders = {
 DEFAULT_STYLE = MdStyle()
 MARKDOWN_STYLE_PATH = Path("./data/MarkdownStyles")
 
-def LoadMarkdownStyles(path: Union[str, Path]) -> MdStyle:
-
-    style = path if isinstance(path, Path) else Path(path)
+def LoadMarkdownStyles(style: Union[str, Path]) -> MdStyle:
+    if isinstance(style, str):
+        findPath = (Path(__file__).parent / 'styles' / style)
+        if findPath.exists() and findPath.is_dir():
+            style = findPath
+        else:
+            style = Path(style)
+    else:
+        style = style
 
     elements = json.loads(open(style / "elements.json",encoding="UTF-8").read())
     setting = json.loads(open(style / "setting.json",encoding="UTF-8").read())
