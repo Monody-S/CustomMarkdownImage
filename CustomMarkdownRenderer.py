@@ -831,7 +831,8 @@ class MdStyle:
      - dotted_line 虚线
     """
 
-    backGroundDrawFunc:mdBackGroundDrawFunc = DefaultMdBackGroundDraw
+    # mdBackGroundDrawFunc 可以删了
+    # backGroundDrawFunc:mdBackGroundDrawFunc = DefaultMdBackGroundDraw
     """背景绘制函数"""
 
     unorderedListDotColor:mdColor = (204,229,255)
@@ -926,6 +927,10 @@ class MdStyle:
         )
         return fontCache[key]
     
+    def backGroundDrawFunc(xs: int, ys: int) -> Image.Image:
+        """背景绘制函数"""
+        return DefaultMdBackGroundDraw(xs, ys)
+
     def Render(
         self,
         text: str,
