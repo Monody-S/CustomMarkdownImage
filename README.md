@@ -33,11 +33,21 @@ style.Render("# Is Markdown")
 > 分页+侧边图渲染
 ![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览2.gif)
 
+## Style下载
+
+见[github](https://github.com/Monody-S/CustomMarkdownImage/tree/main/styles)
+
 ## 其他
 
 欢迎各位分享你自己的style风格，联系QQ`614675349`，或者直接在GitHub上提交PR
 
-
 ## TODO
 
 LaTex解析
+
+## 更新日志
+
+### 0.5.3
+
+修复了表格渲染会错误的在前后加上行间距的问题
+增加了表格的debug显示
