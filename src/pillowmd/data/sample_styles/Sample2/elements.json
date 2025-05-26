@@ -1,0 +1,54 @@
+
+{
+    "enable":true,
+    "page":13,
+    "duratio":0.23,
+    "playbackSequence":"",
+    "background":{
+        "mode": 1,
+        "data": {
+            "left-up": "1.png",
+            "left": "4.png",
+            "left-down": "6.png",
+            "up": "2.png",
+            "down": "7.png",
+            "right-up": "3.png",
+            "right": "5.png",
+            "right-down": "8.png",
+            "m-lock":true,
+
+            "lr-mode": 2,
+            "ud-mode": 2,
+
+            "middle": "9.png",
+            "middle-mode": 0
+        }
+    },
+    "decorates":{
+        "top":{
+            "left-up": [],
+            "left": [],
+            "left-down": [],
+            "up": [],
+            "down": [],
+            "right-up": [],
+            "right": [],
+            "right-down": [],
+            "middle": []
+        },
+        "bottom":{
+            "left-up": [],
+            "left": [],
+            "left-down": [],
+            "up": [{
+                "img": "2.aa.png",
+                "mode": 0
+                }],
+            "down": [],
+            "right-up": [],
+            "right": [],
+            "right-down": [],
+            "middle": []
+        }
+    }
+}

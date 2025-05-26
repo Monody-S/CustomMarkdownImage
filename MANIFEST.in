@@ -1,0 +1,17 @@
+include *.in
+include *.md
+include *.py
+include *.toml
+include *.txt
+include *.yaml
+include *.yml
+
+exclude test.py
+
+graft tests
+graft src
+graft docs
+
+global-exclude .git*
+global-exclude *.pyc
+global-exclude *.so

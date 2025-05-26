@@ -6,7 +6,7 @@
 
 ## 如何使用
 
-先使用`style = Cmr.LoadMarkdownStyles(style路径)`，然后使用`style.Render(markdown内容)`即可快速渲染。若没有style，则可以`Cmr.MdToImage(内容)`使用默认风格渲染
+先使用`style = pillowmd.LoadMarkdownStyles(style路径)`，然后使用`style.Render(markdown内容)`即可快速渲染。若没有style，则可以`pillowmd.MdToImage(内容)`使用默认风格渲染
 
 ## 自定义style
 
@@ -26,7 +26,7 @@
 
 ## 其他
 
-欢迎各位分享你自己的style风格，联系QQ`614675349`
+欢迎各位分享你自己的style风格，联系QQ`614675349`，或者直接在GitHub上提交PR
 
 
 ## TODO
