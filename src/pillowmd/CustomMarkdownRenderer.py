@@ -1780,8 +1780,11 @@ async def MdToImage(
                         
                         rowSizes.append(nMaxRowSize)
                     
-                    forms.append({"height":(formRow+2)*formLineSpace+sum(rowSizes),"width":sum(colunmSizes)+exterX,"rowSizes":copy.deepcopy(rowSizes),"colunmSizes":copy.deepcopy(colunmSizes),"form":copy.deepcopy(form),"endIdx":tempIdx,"beginIdx":idx})
-                    ny += lineSpace*2+(formRow+2)*formLineSpace+sum(rowSizes)
+                    forms.append({"height":(formRow)*formLineSpace+sum(rowSizes)+formLineSpace,"width":sum(colunmSizes)+exterX,"rowSizes":copy.deepcopy(rowSizes),"colunmSizes":copy.deepcopy(colunmSizes),"form":copy.deepcopy(form),"endIdx":tempIdx,"beginIdx":idx})
+                    if debug:
+                        debugs.append((lb+nx,ub+ny,lb+nx+forms[-1]["width"],ub+ny+forms[-1]["height"]))
+                    ny += lineSpace*(tempIdx < textS)+forms[-1]["height"]
+                    ys = 0
                     idx = tempIdx
                     nmaxX = max(nmaxX,sum(colunmSizes)+exterX)
                     continue
@@ -2354,10 +2357,10 @@ async def MdToImage(
             formHeight = formData['height']
             formWidth =formData['width']
             idx = formData['endIdx']
-            ny += lineSpace
+            # ny += lineSpace
 
             exterNum = 0
-            bx,by = int(lb+halfFormLineSpace),ub+ny+int(halfFormLineSpace)+exterNum
+            bx,by = int(lb+halfFormLineSpace),ub+ny+exterNum+halfFormLineSpace
             
             draw.rectangle((bx,by,int(lb-halfFormLineSpace+formWidth),ub+ny+int(halfFormLineSpace)+formLineSpace*len(rowSizes)+sum(rowSizes)),style.formUnderpainting)
             draw.rectangle((bx,by,int(bx-halfFormLineSpace*2+formWidth),by+rowSizes[0]+formLineSpace),style.formTitleUnderpainting)
@@ -2369,9 +2372,9 @@ async def MdToImage(
             
             exterNum = 0
             for num in colunmSizes:
-                draw.line((int(lb+halfFormLineSpace)+exterNum,ub+ny+int(halfFormLineSpace),int(lb+halfFormLineSpace)+exterNum,ub+ny+int(formHeight-formLineSpace*3/2)),style.formLineColor,2)
+                draw.line((int(lb+halfFormLineSpace)+exterNum,ub+ny+int(halfFormLineSpace),int(lb+halfFormLineSpace)+exterNum,ub+ny+int(formHeight-halfFormLineSpace)),style.formLineColor,2)
                 exterNum += num+formLineSpace
-            draw.line((int(lb+halfFormLineSpace)+exterNum,ub+ny+int(halfFormLineSpace),int(lb+halfFormLineSpace)+exterNum,ub+ny+int(formHeight-formLineSpace*3/2)),style.formLineColor,2)
+            draw.line((int(lb+halfFormLineSpace)+exterNum,ub+ny+int(halfFormLineSpace),int(lb+halfFormLineSpace)+exterNum,ub+ny+int(formHeight-halfFormLineSpace)),style.formLineColor,2)
 
             formRow = len(form)
             formHeadNum = len(form[0])
@@ -2408,8 +2411,7 @@ async def MdToImage(
                     formTextX += colunmSizes[j]+formLineSpace
                 
                 formTextY += rowSizes[ii]+formLineSpace
-            
-            ny += lineSpace+formHeight
+            ny += lineSpace*(formData['endIdx'] < textS)+formHeight
             continue
         else:
             textMode = True

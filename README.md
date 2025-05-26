@@ -44,3 +44,10 @@ style.Render("# Is Markdown")
 ## TODO
 
 LaTex解析
+
+## 更新日志
+
+### 0.5.3
+
+修复了表格渲染会错误的在前后加上行间距的问题
+增加了表格的debug显示
