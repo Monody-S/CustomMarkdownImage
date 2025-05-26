@@ -2,19 +2,28 @@
 
 ## 开始使用
 
-将整个项目clone下来，删除sample后，放入你的项目中，直接`import CustomMarkdownRenderer as Cmr`即可开始使用
+使用`pip install pillowmd`
 
 ## 如何使用
 
 先使用`style = pillowmd.LoadMarkdownStyles(style路径)`，然后使用`style.Render(markdown内容)`即可快速渲染。若没有style，则可以`pillowmd.MdToImage(内容)`使用默认风格渲染
 
+注：MdToImage是异步函数，若想使用默认风格进行同步渲染，请使用：
+
+```python
+import pillowmd
+style = pillowmd.MdStyle()
+style.Render("# Is Markdown")
+```
+
+
 ## 自定义style
 
-见目录下的`how_to……`，里面有进一步指南，也可以进入Q群`498427849`
+见`docs`目录下的`how_to……`，里面有进一步指南，也可以进入Q群`498427849`
 
 ## 使用例
 
-见目录下各`sample.py`文件
+见tests目录
 
 ## 图片预览
 
