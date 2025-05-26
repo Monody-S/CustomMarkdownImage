@@ -1,0 +1,43 @@
+[project]
+name = "pillowmd"
+description = "基于 Pillow 的可自定义 Markdown 风格渲染器，渲染速度快且易于配置"
+authors = [{ name = "迷梦龙", email = "614675349@qq.com" }]
+dependencies = [
+    'pillow',
+    'pyyaml',
+    'httpx',
+    'fonttools'
+]
+requires-python = ">=3.11,<4.0"
+readme = "README.md"
+license = "MIT"
+keywords = ["markdown", "pillow", "image", "rendering", "custom"]
+classifiers=[
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'Natural Language :: Chinese (Simplified)',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Operating System :: OS Independent',
+    'Topic :: Software Development :: Libraries :: Python Modules'
+]
+dynamic = [
+  "version",
+]
+
+[project.urls]
+homepage = "https://github.com/Monody-S/CustomMarkdownImage"
+
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["pillowmd"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pillowmd.__version__" }
