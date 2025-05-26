@@ -28,10 +28,10 @@ style.Render("# Is Markdown")
 ## 图片预览
 
 > 元素预览
-![元素预览](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览2.gif)
+![元素预览](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览1.gif)
 
 > 分页+侧边图渲染
-![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览1.gif)
+![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览2.gif)
 
 ## 其他
 
