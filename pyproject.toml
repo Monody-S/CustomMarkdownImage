@@ -6,7 +6,8 @@ dependencies = [
     'pillow',
     'pyyaml',
     'httpx',
-    'fonttools'
+    'fonttools',
+    "pillowlatex"
 ]
 requires-python = ">=3.11,<4.0"
 readme = "README.md"

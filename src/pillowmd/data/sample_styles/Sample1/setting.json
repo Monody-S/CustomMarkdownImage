@@ -18,7 +18,7 @@
     "xSizeMax": 1000,
     "font": "smSans.ttf",
     "titleFont": "smSans.ttf",
-    "expressionFont": "smSans.ttf",
+    "expressionFont": "STIXTwoMath-Regular.ttf",
     "codeFont": "smSans.ttf",
     "codeBlockLRDistance": 20,
     "codeBlockUDDistance": 20,
