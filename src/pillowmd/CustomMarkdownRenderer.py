@@ -1868,7 +1868,7 @@ async def MdToImage(
                     fontK = nowf
                     nowf = GetGFont(nowf)
                     print(text[idx+1:tempIdx])
-                    lateximgs = pillowlatex.RenderLaTexObjs(pillowlatex.GetLaTexObjs(text[idx+1:tempIdx]), font = MixFontToLatexFont(nowf), color = style.expressionTextColor, debug = debug)
+                    lateximgs = pillowlatex.RenderLaTeXObjs(pillowlatex.GetLaTeXObjs(text[idx+1:tempIdx]), font = MixFontToLatexFont(nowf), color = style.expressionTextColor, debug = debug)
                     print(lateximgs)
                     latexs.append({
                         "begin": idx,
@@ -2652,7 +2652,7 @@ async def MdToImage(
 
         if islatex:
             print("islatex")
-            img: pillowlatex.LaTexImage = latexs[0]["images"][nowlatexImageIdx]
+            img: pillowlatex.LaTeXImage = latexs[0]["images"][nowlatexImageIdx]
             drawEffect.rectangle((lb+nx, ub+ny, lb+nx+img.width, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
             imgText.alpha_composite(
                 img.img, (lb+nx-img.space, ub+ny+(hs[yidx-1]-img.height) // 2-img.space)

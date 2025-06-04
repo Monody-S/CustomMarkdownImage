@@ -33,6 +33,10 @@ style.Render("# Is Markdown")
 > 分页+侧边图渲染
 ![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览2.gif)
 
+> 新版本LaTeX支持
+![额外效果](https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/refs/heads/main/preview/预览3.png)
+
+
 ## Style下载
 
 见[github](https://github.com/Monody-S/CustomMarkdownImage/tree/main/styles)
@@ -41,11 +45,11 @@ style.Render("# Is Markdown")
 
 欢迎各位分享你自己的style风格，联系QQ`614675349`，或者直接在GitHub上提交PR
 
-## TODO
-
-LaTex解析
-
 ## 更新日志
+
+### 0.6.0
+
+新增latex支持，详见[pillowlatex](https://github.com/Monody-S/pillowlatex)
 
 ### 0.5.3
 
