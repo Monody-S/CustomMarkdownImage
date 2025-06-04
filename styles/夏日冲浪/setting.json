@@ -18,7 +18,7 @@
     "xSizeMax": 1000,
     "font": "OPPOSans-Regular.ttf",
     "titleFont": "仓耳小丸子.ttf",
-    "expressionFont": "OPPOSans-Medium.ttf",
+    "expressionFont": "STIXTwoMath-Regular.ttf",
     "codeFont": "OPPOSans-Medium.ttf",
     "codeBlockLRDistance": 20,
     "codeBlockUDDistance": 20,

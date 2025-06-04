@@ -19,6 +19,8 @@ import inspect
 import asyncio
 import yaml
 
+import pillowlatex
+
 import sys
 
 from . import Setting
@@ -544,6 +546,9 @@ class MixFont(FreeTypeFont):
         self.font_dict = TTFont(font)
         self.font_dict = self.font_dict['cmap'].tables[0].ttFont.getBestCmap().keys() #type: ignore
 
+        self.font_path = font
+        self.seconde_font_paths = second_fonts.copy()
+
         def _GetD(font:Union[str, Path]) -> TTFont:
             k = TTFont(font)
             return k['cmap'].tables[0].ttFont.getBestCmap().keys() #type: ignore
@@ -916,6 +921,9 @@ class MdStyle:
 
     fontYCorrect: dict[str, float] = field(default_factory=lambda: {})
     """字体Y轴偏移量（用于修正字体渲染时的Y轴偏移），值为百分比"""
+
+    expressionTextSpace:int = 10
+    """表达式边缘间距"""
 
     def GetMixFont(self, mainFont:str,size:int,secondFonts:Optional[list[str]] = None) -> MixFont:
 
@@ -1392,6 +1400,28 @@ def LoadMarkdownStyles(path: Union[str, Path]) -> MdStyle:
 
     return mdStyle
 
+latex_font_cache: dict[str, pillowlatex.MixFont] = {}
+def MixFontToLatexFont(mixFont:MixFont) -> pillowlatex.MixFont:
+    mainFont = mixFont.font_path
+    secondFonts = mixFont.seconde_font_paths
+    size = int(mixFont.size)
+
+    key = str(hash(str([mainFont,secondFonts,size])))
+
+    if key in latex_font_cache:
+        return latex_font_cache[key]
+    
+    print(secondFonts)
+    
+    latex_font_cache[key] = pillowlatex.MixFont(
+        mainFont,
+        size = size,
+        second_fonts = secondFonts,
+        font_y_correct = mixFont.font_y_correct
+    )
+
+    return latex_font_cache[key]
+
 async def MdToImage(
         text: str,
         title: str = "",
@@ -1588,6 +1618,13 @@ async def MdToImage(
         font3G
     ]
 
+    latexs: list[dict] = []
+    """Latex列表"""
+    latexIdx: int = -1
+    """Latex索引"""
+    nowlatexImageIdx: int = -1
+    """当前Latex图片索引"""
+
     def GetGFont(font:MixFont) -> MixFont:
         return font1G if font == font1 \
         else font2G if font == font2 \
@@ -1600,8 +1637,27 @@ async def MdToImage(
         idx += 1
         i = text[idx]
         xidx += 1
+
         size = nowf.GetSize(i)
         xs,ys = size[0],size[1]
+
+        if latexIdx != -1 and latexs[latexIdx]["begin"]< idx <latexs[latexIdx]["end"]:
+            nowlatexImageIdx += 1
+            if nowlatexImageIdx >= len(latexs[latexIdx]["images"]):
+                idx = latexs[latexIdx]["end"] - 1
+                nowlatexImageIdx = -1
+                print("Latex end")
+                continue
+            else:
+                space = latexs[latexIdx]["space"]
+                i = latexs[latexIdx]["images"][nowlatexImageIdx]
+                sz = latexs[latexIdx]["images"][nowlatexImageIdx].size
+                xs, ys = [
+                    sz[0],
+                    sz[1] + space * 2
+                ]
+                print(xs,ys)
+                nowObjH = ys
 
         if idx in skips:
             continue
@@ -1811,6 +1867,18 @@ async def MdToImage(
                 if not bMode:
                     fontK = nowf
                     nowf = GetGFont(nowf)
+                    print(text[idx+1:tempIdx])
+                    lateximgs = pillowlatex.RenderLaTexObjs(pillowlatex.GetLaTexObjs(text[idx+1:tempIdx]), font = MixFontToLatexFont(nowf), color = style.expressionTextColor, debug = debug)
+                    print(lateximgs)
+                    latexs.append({
+                        "begin": idx,
+                        "end": tempIdx,
+                        "images": lateximgs,
+                        "maxheight": max([i.height for i in lateximgs]),
+                        "space": pillowlatex.settings.SPACE
+                    })
+                    latexIdx += 1
+                    nowlatexImageIdx = -1
                 else:
                     nowf = fontK
                 bMode = not bMode
@@ -2028,8 +2096,10 @@ async def MdToImage(
                     continue
         
         if debug:
-            sz = nowf.GetSize(i)
-            debugs.append((lb+nx,ub+ny+nmaxh-nowf.size,lb+nx+sz[0],ub+ny+nmaxh))
+            sz = (xs, ys)
+            debugs.append((lb+nx,ub+ny+nmaxh-nowObjH,lb+nx+sz[0],ub+ny+nmaxh))
+        
+        print(ys)
 
         ex = 0
         preNmaxh = max(nmaxh,nowObjH)
@@ -2237,7 +2307,9 @@ async def MdToImage(
         hMode = mode
         draw.text_blod_mode = mode
 
+    nowlatexImageIdx = -1
     imageIdx = -1
+    islatex = False
 
     idx: int = -1
     while idx<textS-1:
@@ -2248,6 +2320,30 @@ async def MdToImage(
         xidx += 1
         size = nowf.GetSize(i)
         xs,ys = size[0],size[1]
+
+        islatex = False
+
+        if latexs and latexs[0]["begin"]< idx <latexs[0]["end"]:
+            # print(latexs[0])
+            nowlatexImageIdx += 1
+            if nowlatexImageIdx >= len(latexs[0]["images"]):
+                idx = latexs[0]["end"] - 1
+                nowlatexImageIdx = -1
+                print("Latex end")
+                del latexs[0]
+                continue
+            else:
+                islatex = True
+                space = latexs[0]["space"]
+                i = latexs[0]["images"][nowlatexImageIdx]
+                sz = latexs[0]["images"][nowlatexImageIdx].size
+                xs, ys = [
+                    sz[0],
+                    sz[1] + space * 2
+                ]
+                print(xs,ys)
+                nowObjH = ys
+
         if idx in skips:
             if idx in linkends:
                 ChangeLinkMode(False)
@@ -2447,8 +2543,8 @@ async def MdToImage(
                     fs = nowf.size
                     nowf = fontK
                 bMode = not bMode
-                zx,zy = lb+nx,ub+ny+hs[yidx-1]
-                drawEffect.rectangle((zx,zy-fs-2,zx+2,zy),style.expressionUnderpainting)
+                # zx,zy = lb+nx,ub+ny+hs[yidx-1]
+                drawEffect.rectangle((lb+nx-1, ub+ny, lb+nx+1, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
                 nx += 2
                 continue
         if i == "`" and (text[idx-1]!="\\" if idx>=1 else True) and not codeMode and not bMode:
@@ -2554,7 +2650,14 @@ async def MdToImage(
         if debug:
             print(f"{i}: {lb+nx},{ub+ny+hs[yidx-1]-nowf.size} idx:{yidx}")
 
-        if isImage and isinstance(nowImage,Image.Image):
+        if islatex:
+            print("islatex")
+            img: pillowlatex.LaTexImage = latexs[0]["images"][nowlatexImageIdx]
+            drawEffect.rectangle((lb+nx, ub+ny, lb+nx+img.width, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
+            imgText.alpha_composite(
+                img.img, (lb+nx-img.space, ub+ny+(hs[yidx-1]-img.height) // 2-img.space)
+            )
+        elif isImage and isinstance(nowImage,Image.Image):
             #drawImage.rectangle((lb+nx-1,ub+ny+hs[yidx-1]-nowImage.size[1]-1,lb+nx+nowImage.size[0]+1,ub+ny+hs[yidx-1]+1),None,"#99FFCCAA",2)
             imgImages.alpha_composite(nowImage.convert("RGBA"),(int(lb+nx), ub+ny+hs[yidx-1]-nowImage.size[1]))
         elif bMode or bMode2:
@@ -2570,8 +2673,8 @@ async def MdToImage(
             draw.text((lb+nx,ub+ny+hs[yidx-1]-nowf.size),i,normalColor,nowf)
         
         if debug:
-            sz = nowf.GetSize(i)
-            draw.rectangle((lb+nx,ub+ny+hs[yidx-1]-nowf.size,lb+nx+sz[0],ub+ny+hs[yidx-1]),None,(255,0,0))
+            sz = (xs,ys)
+            draw.rectangle((lb+nx,ub+ny+hs[yidx-1]-ys,lb+nx+sz[0],ub+ny+hs[yidx-1]),None,(255,0,0))
             draw.text((lb,ub+ny-fontC.size),f"hs:{hs[yidx-1]} {yidx}/{len(hs)}",(255,0,0),fontC)
             draw.line((lb-3,ub+ny,lb-3,ub+ny+hs[yidx-1]),(255,0,0))
 

@@ -24,7 +24,7 @@ xSizeMax: 1000 # X轴单行元素最大长度
 
 font: "smSans.ttf" # 正文字体
 titleFont: "smSans.ttf" # 标题字体
-expressionFont: "smSans.ttf" # 表达式字体
+expressionFont: "STIXTwoMath-Regular.ttf" # 表达式字体
 codeFont: "smSans.ttf" # 代码字体
 
 codeBlockLRDistance: 20 # 代码块左右边距
