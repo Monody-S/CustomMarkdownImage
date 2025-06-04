@@ -5,5 +5,6 @@ from . import (
     sample_gif,
     sample_style,
     sample_page,
-    sample_func
+    sample_func,
+    sample_latex
 )

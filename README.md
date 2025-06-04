@@ -47,6 +47,10 @@ LaTex解析
 
 ## 更新日志
 
+### 0.6.0
+
+新增latex支持，详见[pillowlatex](https://github.com/Monody-S/pillowlatex)
+
 ### 0.5.3
 
 修复了表格渲染会错误的在前后加上行间距的问题
