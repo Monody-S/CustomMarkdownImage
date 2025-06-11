@@ -27,19 +27,23 @@
     <img src="https://img.shields.io/badge/LaTeX-red" alt="LaTeX">
   </a>
   <a href="https://daringfireball.net/projects/markdown">
-    <img src="https://img.shields.io/badge/Markdown-red" alt="LaTeX">
+    <img src="https://img.shields.io/badge/Markdown-red" alt="Markdown">
   </a>
   <a href="https://github.com/python-pillow/Pillow">
-    <img src="https://img.shields.io/badge/Pillow-red" alt="LaTeX">
+    <img src="https://img.shields.io/badge/Pillow-red" alt="Pillow">
   </a>
   <a href="https://github.com/Monody-S/pillowlatex">
-    <img src="https://img.shields.io/badge/PillowLaTeX-red" alt="LaTeX">
+    <img src="https://img.shields.io/badge/PillowLaTeX-red" alt="PillowLaTeX">
   </a>
+  <img src="https://img.shields.io/badge/NoBrowser-green" alt="NoBrowser">
+  <img src="https://img.shields.io/badge/NoMatplotlib-green" alt="NoMatplotlib">
   <br />
-  <a href="https://jq.qq.com/?_wv=1027&k=5OFifDh">
+  <a href="https://qm.qq.com/q/h8hYy8j6YU">
     <img src="https://img.shields.io/badge/QQ%E7%BE%A4-498427849-orange?style=flat-square" alt="QQ Chat Group">
   </a>
-  
+  <a href="https://pd.qq.com/s/51umxrsg0">
+    <img src="https://img.shields.io/badge/QQ%E9%A2%91%E9%81%93-SugarPublic-5492ff?style=flat-square" alt="QQ Channel">
+  </a>
 </p>
 
 ## 开始使用
