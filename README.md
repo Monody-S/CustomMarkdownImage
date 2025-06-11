@@ -82,7 +82,7 @@ style.Render("# Is Markdown")
 
 ### 0.7.0
 
-新增行间latex支持，优化readme
+新增行间latex支持，优化readme，现在引用一级的线会被渲染出来了
 
 ### 0.6.0
 
