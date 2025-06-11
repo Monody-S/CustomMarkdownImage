@@ -6,9 +6,41 @@
 
 # CustomMarkdownImage
 
-✨ 基于pillow的自定义markdown渲染器 ✨
+✨ 基于pillow的可自定义markdown渲染器 ✨
 
 </div>
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/Monody-S/CustomMarkdownImage/master/LICENSE">
+    <img src="https://img.shields.io/github/license/Monody-S/CustomMarkdownImage" alt="license">
+  </a>
+  <a href="https://pypi.python.org/pypi/pillowmd">
+    <img src="https://img.shields.io/pypi/v/pillowmd?logo=python&logoColor=edb641" alt="pypi">
+  </a>
+  <img src="https://img.shields.io/badge/python-3.11+-blue?logo=python&logoColor=edb641" alt="python">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Monody-S/CustomMarkdownImage">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Monody-S/CustomMarkdownImage">
+  <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/pillowmd">
+  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/Monody-S/CustomMarkdownImage">
+  <br />
+  <a href="https://www.latex-project.org">
+    <img src="https://img.shields.io/badge/LaTeX-red" alt="LaTeX">
+  </a>
+  <a href="https://daringfireball.net/projects/markdown">
+    <img src="https://img.shields.io/badge/Markdown-red" alt="LaTeX">
+  </a>
+  <a href="https://github.com/python-pillow/Pillow">
+    <img src="https://img.shields.io/badge/Pillow-red" alt="LaTeX">
+  </a>
+  <a href="https://github.com/Monody-S/pillowlatex">
+    <img src="https://img.shields.io/badge/PillowLaTeX-red" alt="LaTeX">
+  </a>
+  <br />
+  <a href="https://jq.qq.com/?_wv=1027&k=5OFifDh">
+    <img src="https://img.shields.io/badge/QQ%E7%BE%A4-498427849-orange?style=flat-square" alt="QQ Chat Group">
+  </a>
+  
+</p>
 
 ## 开始使用
 
@@ -45,7 +77,7 @@ style.Render("# Is Markdown")
 |无序列表|* 123<br>* 123|✅️||
 |有序列表|1. 123<br>2. 123|✅️||
 |行中代码|这是\`行中代码\`|✅️|不支持高亮|
-|行中表达式|这是\`行中表达式\`|✅️|支持latex，且支持latex拆分换行，详见[pillowlatex](https://github.com/Monody-S/pillowlatex)|
+|行中表达式|这是\$行中表达式\$|✅️|支持latex，且支持latex拆分换行，详见[pillowlatex](https://github.com/Monody-S/pillowlatex)|
 |表格|\|这是\|表格\|<br>\|-\|-\|<br>\|1\|2\||✅️|表格中仅支持普通文本，且不支持自定义对其方式。会自动换行|
 |代码块|\`\`\`python<br>print("hello world")<br>\`\`\`|✅️|不支持高亮|
 |行间表达式|&&<br>\frac{1}{2}<br>&&|✅️|支持latex，且支持latex拆分换行，详见[pillowlatex](https://github.com/Monody-S/pillowlatex)|
