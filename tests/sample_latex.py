@@ -59,4 +59,8 @@ ${t}$
 这是代码块里的内容
 ```
 
+$$
+这是行间latex表达式：\\sin^2(\\pi)\\times\\cos^2(\\pi)$
+$$
+
 """,title="标题").image.show()

@@ -1,6 +1,6 @@
 [project]
 name = "pillowmd"
-description = "基于 Pillow 的可自定义 Markdown 风格渲染器，渲染速度快且易于配置"
+description = "基于 Pillow 的可自定义 Markdown 风格渲染器，支持LaTeX，渲染速度快且易于配置"
 authors = [{ name = "迷梦龙", email = "614675349@qq.com" }]
 dependencies = [
     'pillow',

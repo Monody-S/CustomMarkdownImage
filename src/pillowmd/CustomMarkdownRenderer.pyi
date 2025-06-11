@@ -224,7 +224,9 @@ class MdStyle:
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
         """
         将Markdown转化为图片（异步解析图片url）
@@ -241,7 +243,9 @@ class MdStyle:
         logo - logo（相对logo文件夹），若传入Image则直接使用
         showLink - 是否显示链接（否则只显示连接文字）
         noDecoration - 是否不使用装饰（返回透明背景）
-
+        sgexter - 是否使用自定义对象
+        sgm - 是否使用快速渲染图片
+        
         ---
 
         Markdown额外语法说明
@@ -278,7 +282,9 @@ class MdStyle:
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
         """
         将Markdown转化为图片
@@ -295,6 +301,8 @@ class MdStyle:
         logo - logo（相对logo文件夹），若传入Image则直接使用
         showLink - 是否显示链接（否则只显示连接文字）
         noDecoration - 是否不使用装饰（返回透明背景）
+        sgexter - 是否使用自定义对象
+        sgm - 是否使用快速渲染图片
 
         ---
 
@@ -341,7 +349,9 @@ async def MdToImage(
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
     """
     将Markdown转化为图片
@@ -358,6 +368,8 @@ async def MdToImage(
     logo - logo（相对logo文件夹），若传入Image则直接使用
     showLink - 是否显示链接（否则只显示连接文字）
     noDecoration - 是否不使用装饰（返回透明背景）
+    sgexter - 是否使用自定义对象
+    sgm - 是否使用快速渲染图片
 
     ---
 

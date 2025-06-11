@@ -34,7 +34,11 @@ def run():
 
 ```这是行中代码块
 这是代码块里的内容
-```"""
+```
+
+$$
+这是行间latex表达式：\\sin^2(\\pi)\\times\\cos^2(\\pi)$
+$$"""
 
     logo = pillowmd.SampleStyles.SAMPLE_LOGO
 

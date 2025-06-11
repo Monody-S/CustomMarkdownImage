@@ -969,7 +969,9 @@ class MdStyle:
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
         """
         将Markdown转化为图片（异步解析图片url）
@@ -986,6 +988,8 @@ class MdStyle:
         logo - logo（相对logo文件夹），若传入Image则直接使用
         showLink - 是否显示链接（否则只显示连接文字）
         noDecoration - 是否不使用装饰（返回透明背景）
+        sgexter - 是否使用自定义对象
+        sgm - 是否使用快速渲染图片
 
         ---
 
@@ -1038,7 +1042,9 @@ class MdStyle:
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
         """
         将Markdown转化为图片
@@ -1055,6 +1061,8 @@ class MdStyle:
         logo - logo（相对logo文件夹），若传入Image则直接使用
         showLink - 是否显示链接（否则只显示连接文字）
         noDecoration - 是否不使用装饰（返回透明背景）
+        sgexter - 是否使用自定义对象
+        sgm - 是否使用快速渲染图片
 
         ---
 
@@ -1411,8 +1419,6 @@ def MixFontToLatexFont(mixFont:MixFont) -> pillowlatex.MixFont:
     if key in latex_font_cache:
         return latex_font_cache[key]
     
-    print(secondFonts)
-    
     latex_font_cache[key] = pillowlatex.MixFont(
         mainFont,
         size = size,
@@ -1435,7 +1441,9 @@ async def MdToImage(
         debug: bool = False,
         logo: Optional[Union[Image.Image, str]] = None,
         showLink:bool = True,
-        noDecoration: bool = False
+        noDecoration: bool = False,
+        sgexter: bool = False,
+        sgm: bool = False
     ) -> MdRenderResult:
     """
     将Markdown转化为图片
@@ -1452,6 +1460,8 @@ async def MdToImage(
     logo - logo（相对logo文件夹），若传入Image则直接使用
     showLink - 是否显示链接（否则只显示连接文字）
     noDecoration - 是否不使用装饰（返回透明背景）
+    sgexter - 是否使用自定义对象
+    sgm - 是否使用快速渲染图片
 
     ---
 
@@ -1534,6 +1544,8 @@ async def MdToImage(
     """前字体"""
     hs: list[int] = []
     """当前行高度列表"""
+    maxxs: list[int] = []
+    """当前最大x宽度列表"""
 
     textS: int = len(text)
     """文本长度"""
@@ -1643,10 +1655,12 @@ async def MdToImage(
 
         if latexIdx != -1 and latexs[latexIdx]["begin"]< idx <latexs[latexIdx]["end"]:
             nowlatexImageIdx += 1
+
             if nowlatexImageIdx >= len(latexs[latexIdx]["images"]):
                 idx = latexs[latexIdx]["end"] - 1
                 nowlatexImageIdx = -1
-                print("Latex end")
+                if debug:
+                    print("Latex end")
                 continue
             else:
                 space = latexs[latexIdx]["space"]
@@ -1656,7 +1670,8 @@ async def MdToImage(
                     sz[0],
                     sz[1] + space * 2
                 ]
-                print(xs,ys)
+                if debug:
+                    print(xs,ys)
                 nowObjH = ys
 
         if idx in skips:
@@ -1718,7 +1733,7 @@ async def MdToImage(
                 idx += 1
             while idx+1<textS and text[idx+1]==" ":
                 idx += 1
-            nx += 30*(citeNum-1)+5
+            nx += 30*(citeNum)+5
             continue
         elif not textMode and idx+2 <= textS and text[idx:idx+3] in ["```","~~~"]:
             ny+=codeUb
@@ -1731,7 +1746,6 @@ async def MdToImage(
             else:
                 nowf = fontK
             codeMode = not codeMode
-            #idx+=1
             continue
         elif not textMode and i == "|" and not codeMode:
             tempIdx = idx-1
@@ -1854,6 +1868,65 @@ async def MdToImage(
             idx+=1
             continue
 
+        if i == "$" and (text[idx-1]!="\\" if idx>=1 else True) and (idx+1 < textS and text[idx+1] == "$") and not codeMode and not bMode2:
+            tempIdx = idx
+            flag = False
+            while tempIdx<textS-1:
+                tempIdx += 1
+                if text[tempIdx]=="$" and tempIdx+1 < textS and text[tempIdx+1] == "$":
+                    flag = True
+                    break
+            if flag or bMode:
+                nx+=2
+                if not bMode:
+
+                    if xidx != 1:
+                        nmaxX = max(nx,nmaxX)
+                        maxxs.append(nx)
+                        nx = codeMode*codeLb
+                        ny += nmaxh+lineSpace
+                        xidx = 0
+                        yidx += 1
+                        hs.append(nmaxh)
+                        nmaxh = int(fontC.size/3)
+                        citeNum = 0
+                        dr = 0
+
+                    fontK = nowf
+                    nowf = GetGFont(nowf)
+                    if debug:
+                        print("|"+text[idx+2:tempIdx]+"|")
+                    lateximgs = pillowlatex.RenderLaTeXObjs(pillowlatex.GetLaTeXObjs(text[idx+2:tempIdx]), font = MixFontToLatexFont(nowf), color = style.expressionTextColor, debug = debug)
+                    if debug:
+                        print(lateximgs)
+                    latexs.append({
+                        "begin": idx+1,
+                        "end": tempIdx,
+                        "images": lateximgs,
+                        "maxheight": max([i.height for i in lateximgs]) if lateximgs else nowf.size,
+                        "space": pillowlatex.settings.SPACE,
+                        "super": True
+                    })
+                    latexIdx += 1
+                    nowlatexImageIdx = -1
+                else:
+
+                    nmaxX = max(nx,nmaxX)
+                    maxxs.append(nx)
+                    nx = codeMode*codeLb
+                    ny += nmaxh+lineSpace
+                    xidx = 0
+                    yidx += 1
+                    hs.append(nmaxh)
+                    nmaxh = int(fontC.size/3)
+                    citeNum = 0
+                    dr = 0
+
+                    nowf = fontK
+                bMode = not bMode
+                idx += 1
+                continue
+
         if i == "$" and (text[idx-1]!="\\" if idx>=1 else True) and not codeMode and not bMode2:
             tempIdx = idx
             flag = False
@@ -1867,15 +1940,18 @@ async def MdToImage(
                 if not bMode:
                     fontK = nowf
                     nowf = GetGFont(nowf)
-                    print(text[idx+1:tempIdx])
+                    if debug:
+                        print(text[idx+1:tempIdx])
                     lateximgs = pillowlatex.RenderLaTeXObjs(pillowlatex.GetLaTeXObjs(text[idx+1:tempIdx]), font = MixFontToLatexFont(nowf), color = style.expressionTextColor, debug = debug)
-                    print(lateximgs)
+                    if debug:
+                        print(lateximgs)
                     latexs.append({
                         "begin": idx,
                         "end": tempIdx,
                         "images": lateximgs,
-                        "maxheight": max([i.height for i in lateximgs]),
-                        "space": pillowlatex.settings.SPACE
+                        "maxheight": max([i.height for i in lateximgs]) if lateximgs else nowf.size,
+                        "space": pillowlatex.settings.SPACE,
+                        "super": False
                     })
                     latexIdx += 1
                     nowlatexImageIdx = -1
@@ -1883,6 +1959,7 @@ async def MdToImage(
                     nowf = fontK
                 bMode = not bMode
                 continue
+
         if i == "`" and (text[idx-1]!="\\" if idx>=1 else True) and not codeMode and not bMode:
             if not (xidx == 1 and idx+2 <= textS and text[idx:idx+3] == "```"):
                 tempIdx = idx
@@ -1902,7 +1979,7 @@ async def MdToImage(
                     bMode2 = not bMode2
                     continue
         
-        if i == "!" and idx+9<textS and text[idx:idx+9] == "!sgexter[" and not codeMode and not bMode:
+        if i == "!" and idx+9<textS and text[idx:idx+9] == "!sgexter[" and not codeMode and not bMode and sgexter:
             tempIdx = idx+8
             flag = False
             data = ""
@@ -1958,7 +2035,7 @@ async def MdToImage(
                             
                             
 
-        if i == "!" and idx+4<textS and text[idx:idx+5] == "!sgm[" and not codeMode and not bMode:
+        if i == "!" and idx+4<textS and text[idx:idx+5] == "!sgm[" and not codeMode and not bMode and sgm:
             tempIdx = idx+4
             flag = False
             imageName = ""
@@ -2099,7 +2176,8 @@ async def MdToImage(
             sz = (xs, ys)
             debugs.append((lb+nx,ub+ny+nmaxh-nowObjH,lb+nx+sz[0],ub+ny+nmaxh))
         
-        print(ys)
+        if debug:
+            print(ys)
 
         ex = 0
         preNmaxh = max(nmaxh,nowObjH)
@@ -2109,6 +2187,7 @@ async def MdToImage(
 
         if i == "\n":
             nmaxX = max(nx,nmaxX)
+            maxxs.append(nx)
             nx = codeMode*codeLb
             ny += nmaxh+lineSpace
             xidx = 0
@@ -2123,6 +2202,7 @@ async def MdToImage(
             continue
         if nx+xs+ex > maxX:
             nmaxX = max(nx,nmaxX)
+            maxxs.append(nx)
             yidx += 1
             nx = codeMode*codeLb
             ny += nmaxh+lineSpace
@@ -2141,6 +2221,7 @@ async def MdToImage(
     nmaxX = max(nx,nmaxX)
     nmaxh = max(nmaxh,ys)
     ny += nmaxh
+    maxxs.append(nx)
     hs.append(nmaxh)
 
     if debug:
@@ -2326,10 +2407,24 @@ async def MdToImage(
         if latexs and latexs[0]["begin"]< idx <latexs[0]["end"]:
             # print(latexs[0])
             nowlatexImageIdx += 1
+
+            # if nowlatexImageIdx == 0 and latexs[0]["super"] and xidx != 1:
+            #     nmaxX = max(nx,nmaxX)
+            #     nx = codeMode*codeLb
+            #     ny += nmaxh+lineSpace
+            #     xidx = 0
+            #     yidx += 1
+            #     hs.append(nmaxh)
+            #     nmaxh = int(fontC.size/3)
+            #     citeNum = 0
+            #     dr = 0
+            #     continue
+
             if nowlatexImageIdx >= len(latexs[0]["images"]):
                 idx = latexs[0]["end"] - 1
                 nowlatexImageIdx = -1
-                print("Latex end")
+                if debug:
+                    print("Latex end")
                 del latexs[0]
                 continue
             else:
@@ -2341,7 +2436,8 @@ async def MdToImage(
                     sz[0],
                     sz[1] + space * 2
                 ]
-                print(xs,ys)
+                if debug:
+                    print(xs,ys)
                 nowObjH = ys
 
         if idx in skips:
@@ -2418,9 +2514,9 @@ async def MdToImage(
                 idx += 1
             if not yMode:
                 drawEffect.rectangle((lb+nx,ub+ny-halfLineSpace,lb+nx+nmaxX,ub+ny+hs[yidx-1]+halfLineSpace),style.citeUnderpainting)
-            for k in range(citeNum-1):
-                drawEffect.line((lb+nx+style.citeDistance*(k+1),ub+ny-halfLineSpace,lb+nx+style.citeDistance*(k+1),ub+ny+hs[yidx-1]+halfLineSpace),style.citeSplitLineColor,5)
-            nx += style.citeDistance*(citeNum-1)+5
+            for k in range(citeNum):
+                drawEffect.line((lb+nx+style.citeDistance*(k),ub+ny-halfLineSpace,lb+nx+style.citeDistance*(k),ub+ny+hs[yidx-1]+halfLineSpace),style.citeSplitLineColor,5)
+            nx += style.citeDistance*(citeNum)+5
             yMode = True
             xidx -= 1
             while idx+1<textS and text[idx+1]==" ":
@@ -2526,6 +2622,67 @@ async def MdToImage(
             idx+=1
             ChangeDeleteLineMode(not lMode)
             continue
+
+        if i == "$" and (text[idx-1]!="\\" if idx>=1 else True) and (idx+1 < textS and text[idx+1] == "$") and not codeMode and not bMode2:
+            tempIdx = idx
+            flag = False
+            while tempIdx<textS-1:
+                tempIdx += 1
+                if text[tempIdx]=="$" and tempIdx+1 < textS and text[tempIdx+1] == "$":
+                    flag = True
+                    break
+            if flag or bMode:
+                if not bMode:
+
+                    if xidx != 1:
+                        nmaxX = max(nx,nmaxX)
+                        maxxs.append(nx)
+                        nx = codeMode*codeLb
+                        ny += nmaxh+lineSpace
+                        xidx = 0
+                        yidx += 1
+                        hs.append(nmaxh)
+                        nmaxh = int(fontC.size/3)
+                        citeNum = 0
+                        dr = 0
+
+                    fontK = nowf
+                    nowf = GetGFont(nowf)
+                    fs = nowf.size
+
+                    xbase = nmaxX // 2 - maxxs[yidx-1] // 2
+
+                    drawEffect.rectangle((xbase+lb+nx-1, ub+ny, xbase+lb+nx+1, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
+
+                else:
+
+                    xbase = nmaxX // 2 - maxxs[yidx-1] // 2
+
+                    drawEffect.rectangle((xbase+lb+nx-1, ub+ny, xbase+lb+nx+1, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
+
+                    nmaxX = max(nx,nmaxX)
+                    maxxs.append(nx)
+                    nx = codeMode*codeLb
+                    ny += nmaxh+lineSpace
+                    xidx = 0
+                    yidx += 1
+                    hs.append(nmaxh)
+                    nmaxh = int(fontC.size/3)
+                    citeNum = 0
+                    dr = 0
+
+                    fs = nowf.size
+                    nowf = fontK
+
+                
+
+                bMode = not bMode
+                # zx,zy = lb+nx,ub+ny+hs[yidx-1]
+                
+                nx += 2
+                idx += 1
+                continue
+
         if i == "$" and (text[idx-1]!="\\" if idx>=1 else True) and not codeMode and not bMode2:
             tempIdx = idx
             flag = False
@@ -2570,7 +2727,7 @@ async def MdToImage(
                     nx += 2
                     continue
 
-        if i == "!" and idx+4<textS and text[idx:idx+5] == "!sgm[" and not codeMode and not bMode:
+        if i == "!" and idx+4<textS and text[idx:idx+5] == "!sgm[" and not codeMode and not bMode and sgm:
             tempIdx = idx+4
             flag = False
             imageName = ""
@@ -2651,11 +2808,26 @@ async def MdToImage(
             print(f"{i}: {lb+nx},{ub+ny+hs[yidx-1]-nowf.size} idx:{yidx}")
 
         if islatex:
-            print("islatex")
+
+            xbase = 0
+
+            if latexs[0]["super"]:
+                if debug:
+                    print("super")
+                    print(xbase)
+                xbase = nmaxX // 2 - maxxs[yidx-1] // 2
+            else:
+                xbase = 0
+            
+            if debug:
+                print(f"xbase:{xbase}")
+
+            if debug:
+                print("islatex")
             img: pillowlatex.LaTeXImage = latexs[0]["images"][nowlatexImageIdx]
-            drawEffect.rectangle((lb+nx, ub+ny, lb+nx+img.width, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
+            drawEffect.rectangle((lb+nx+xbase, ub+ny, lb+nx+img.width+xbase, ub+ny+hs[yidx-1]),style.expressionUnderpainting)
             imgText.alpha_composite(
-                img.img, (lb+nx-img.space, ub+ny+(hs[yidx-1]-img.height) // 2-img.space)
+                img.img, (lb+nx-img.space+xbase, ub+ny+(hs[yidx-1]-img.height) // 2-img.space)
             )
         elif isImage and isinstance(nowImage,Image.Image):
             #drawImage.rectangle((lb+nx-1,ub+ny+hs[yidx-1]-nowImage.size[1]-1,lb+nx+nowImage.size[0]+1,ub+ny+hs[yidx-1]+1),None,"#99FFCCAA",2)
@@ -2673,10 +2845,18 @@ async def MdToImage(
             draw.text((lb+nx,ub+ny+hs[yidx-1]-nowf.size),i,normalColor,nowf)
         
         if debug:
+
+            dtext = f"hs:{hs[yidx-1]} {yidx}/{len(hs)}"
+
             sz = (xs,ys)
             draw.rectangle((lb+nx,ub+ny+hs[yidx-1]-ys,lb+nx+sz[0],ub+ny+hs[yidx-1]),None,(255,0,0))
-            draw.text((lb,ub+ny-fontC.size),f"hs:{hs[yidx-1]} {yidx}/{len(hs)}",(255,0,0),fontC)
+            draw.text((lb,ub+ny-fontC.size),dtext,(255,0,0),fontC,use_lock_color=False,use_blod_mode=False,use_delete_line_mode=False,use_under_line_mode=False)
             draw.line((lb-3,ub+ny,lb-3,ub+ny+hs[yidx-1]),(255,0,0))
+
+            debugtext = f"xsize: {maxxs[yidx-1]}"
+            tsizes = fontC.GetSize(debugtext)
+            draw.text((max(lb+maxxs[yidx-1]-tsizes[0], lb+fontC.GetSize(dtext)[0]),ub+ny-fontC.size),debugtext,(255,0,255),fontC,use_lock_color=False,use_blod_mode=False,use_delete_line_mode=False,use_under_line_mode=False)
+            draw.line((lb,ub+ny,lb+maxxs[yidx-1]-tsizes[0],ub+ny),(255,0,255))
 
         xidx += 1
         nx += xs
