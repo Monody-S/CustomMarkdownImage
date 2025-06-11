@@ -1,7 +1,7 @@
 <div align="center">
 
   <a href="https://github.com/Monody-S/CustomMarkdownImage/blob/main/icon/repository-open-graph-template.png?raw=true">
-    <img src="https://github.com/Monody-S/CustomMarkdownImage/blob/main/icon/repository-open-graph-template.png?raw=true" width="1000" height="500" alt="pillowmd">
+    <img src="https://github.com/Monody-S/CustomMarkdownImage/blob/main/icon/repository-open-graph-template.png?raw=true" max-width=100% height=auto alt="pillowmd">
   </a>
 
 # CustomMarkdownImage
