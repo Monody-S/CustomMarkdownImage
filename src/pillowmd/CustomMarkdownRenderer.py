@@ -2048,7 +2048,10 @@ async def MdToImage(
 
             if flag and (iFile := imageName.split("|")[0].strip()) in sgImages:
                 idx = tempIdx
-                nowImage = Image.open(f"data/MarkdownImages/{iFile}")
+                if Setting.QUICK_IMAGE_PATH:
+                    nowImage = Image.open(Setting.QUICK_IMAGE_PATH / iFile)
+                else:
+                    raise ValueError("Setting.QUICK_IMAGE_PATH未设置，无法为你找到快速图片")
                 if "|" in imageName:
                     reSize = tuple(map(float,imageName.split("|")[1].split(",")))
                     if len(reSize) == 1:
@@ -2097,6 +2100,10 @@ async def MdToImage(
                         async with httpx.AsyncClient() as client:
                             r = await client.get(imageSrc, timeout=imageUrlGetTimeout, headers=defaultHeaders)
                             imageName = f"{drawId}_{dldImageNum}.png"
+
+                            if not os.path.exists(Setting.IMAGE_DOWNLOAD_PATH):
+                                os.makedirs(Setting.IMAGE_DOWNLOAD_PATH)
+                                
                             with open(Setting.IMAGE_DOWNLOAD_PATH / imageName, "wb") as f:
                                 f.write(r.content)
                             try:
@@ -2740,7 +2747,10 @@ async def MdToImage(
 
             if flag and (iFile := imageName.split("|")[0].strip()) in sgImages:
                 idx = tempIdx
-                nowImage = Image.open(f"data/MarkdownImages/{iFile}")
+                if Setting.QUICK_IMAGE_PATH:
+                    nowImage = Image.open(Setting.QUICK_IMAGE_PATH / iFile)
+                else:
+                    raise ValueError("Setting.QUICK_IMAGE_PATH未设置，无法为你找到快速图片")
                 if "|" in imageName:
                     reSize = tuple(map(float,imageName.split("|")[1].split(",")))
                     if len(reSize) == 1:
