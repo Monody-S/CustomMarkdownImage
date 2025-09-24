@@ -17,7 +17,7 @@
   <a href="https://pypi.python.org/pypi/pillowmd">
     <img src="https://img.shields.io/pypi/v/pillowmd?logo=python&logoColor=edb641" alt="pypi">
   </a>
-  <img src="https://img.shields.io/badge/python-3.11+-blue?logo=python&logoColor=edb641" alt="python">
+  <img src="https://img.shields.io/badge/python-3.10+-blue?logo=python&logoColor=edb641" alt="python">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Monody-S/CustomMarkdownImage">
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Monody-S/CustomMarkdownImage">
   <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/pillowmd">
